@@ -9,7 +9,7 @@ public class DatabaseConnection {
     private static final String USER = "root"; //
     private static final String PASSWORD = "2023"; //
 
-    public static Connection getConnection() {
+    public  Connection getConnection() {
         Connection connection = null;
         try {
             // Load and register MySQL JDBC driver
