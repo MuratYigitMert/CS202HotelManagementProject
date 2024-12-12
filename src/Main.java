@@ -7,5 +7,5 @@ public class Main {
     }
     DatabaseConnection dbConnection = new DatabaseConnection();
     Connection a=dbConnection.getConnection();
-    int a=10;
+
 }
