@@ -3,6 +3,6 @@ public class Main {
         System.out.println("Hello, World!");
     }
     int a=31;
-
+    int b=13;
 
 }
