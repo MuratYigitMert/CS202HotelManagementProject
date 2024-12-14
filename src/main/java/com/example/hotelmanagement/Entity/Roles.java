@@ -1,4 +1,4 @@
-package main.java.com.example.hotelmanagement.Entity;
+package com.example.hotelmanagement.Entity;
 
 public class Roles {
     // Fields corresponding to the Roles table columns
