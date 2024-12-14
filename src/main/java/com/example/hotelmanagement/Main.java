@@ -1,3 +1,5 @@
+package com.example.hotelmanagement;
+
 import java.sql.Connection;
 
 public class Main {

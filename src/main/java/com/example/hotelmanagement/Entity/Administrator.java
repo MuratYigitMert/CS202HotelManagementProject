@@ -1,4 +1,4 @@
-package Entity;
+package main.java.com.example.hotelmanagement.Entity;
 
 public class Administrator {
     // Fields corresponding to the Administrator table columns

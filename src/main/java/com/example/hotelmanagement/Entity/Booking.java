@@ -1,4 +1,4 @@
-package Entity;
+package main.java.com.example.hotelmanagement.Entity;
 
 import java.sql.Date;
 

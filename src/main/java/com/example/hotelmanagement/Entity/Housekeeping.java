@@ -1,4 +1,4 @@
-package Entity;
+package main.java.com.example.hotelmanagement.Entity;
 
 public class Housekeeping {
     // Fields corresponding to the Housekeeping table columns
