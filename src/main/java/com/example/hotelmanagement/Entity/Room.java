@@ -1,72 +1,125 @@
 package com.example.hotelmanagement.Entity;
 
 public class Room {
-    // Fields corresponding to the Room table columns
-    private int roomId;               // Primary key, Auto-incremented
-    private int hotelId;              // Foreign key referencing Hotel
-    private String roomNumber;        // Unique room number
-    private int roomTypeId;           // Foreign key referencing Room_Type
-    private String roomType;          // Room type description (may be redundant, you can use the Room_Type table directly)
-    private double price;             // Price of the room
-    private String availabilityStatus; // Availability status: Available, Occupied, Under Maintenance
-    private int bedCount;             // Number of beds in the room
-    private int maxOccupancy;         // Maximum number of people the room can accommodate
-    private int roomSize;             // Size of the room in square feet or meters
-    private String specialAmenities;  // Special amenities available in the room
+    private int roomId;
+    private int hotelId;
+    private String roomNumber;
+    private String availabilityStatus;
+    private int roomTypeId;
+
+    private int bedCount;
+    private int maxOccupancy;
+    private int roomSize;
+    private String specialAmenities;
+    private String roomType; // Added
+    private double price;    // Added
 
     // Constructor
-    public Room(int roomId, int hotelId, String roomNumber, int roomTypeId, String roomType,
-                double price, String availabilityStatus, int bedCount, int maxOccupancy,
-                int roomSize, String specialAmenities) {
+    public Room(int roomId, int hotelId, String roomNumber, int roomTypeId,
+                String availabilityStatus, int bedCount, int maxOccupancy,
+                int roomSize, String specialAmenities, String roomType, double price) {
         this.roomId = roomId;
         this.hotelId = hotelId;
         this.roomNumber = roomNumber;
         this.roomTypeId = roomTypeId;
-        this.roomType = roomType;
-        this.price = price;
         this.availabilityStatus = availabilityStatus;
         this.bedCount = bedCount;
         this.maxOccupancy = maxOccupancy;
         this.roomSize = roomSize;
         this.specialAmenities = specialAmenities;
+        this.roomType = roomType;
+        this.price = price;
     }
 
-    // Getters and Setters in your preferred format
+    // Getters and Setters
+    public int getRoomId() {
+        return roomId;
+    }
 
-    public int getRoomId() { return roomId; }
-    public void setRoomId(int roomId) { this.roomId = roomId; }
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
 
-    public int getHotelId() { return hotelId; }
-    public void setHotelId(int hotelId) { this.hotelId = hotelId; }
+    public int getHotelId() {
+        return hotelId;
+    }
 
-    public String getRoomNumber() { return roomNumber; }
-    public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
+    public void setHotelId(int hotelId) {
+        this.hotelId = hotelId;
+    }
 
-    public int getRoomTypeId() { return roomTypeId; }
-    public void setRoomTypeId(int roomTypeId) { this.roomTypeId = roomTypeId; }
+    public String getRoomNumber() {
+        return roomNumber;
+    }
 
-    public String getRoomType() { return roomType; }
-    public void setRoomType(String roomType) { this.roomType = roomType; }
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
 
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    public int getRoomTypeId() {
+        return roomTypeId;
+    }
 
-    public String getAvailabilityStatus() { return availabilityStatus; }
-    public void setAvailabilityStatus(String availabilityStatus) { this.availabilityStatus = availabilityStatus; }
+    public void setRoomTypeId(int roomTypeId) {
+        this.roomTypeId = roomTypeId;
+    }
 
-    public int getBedCount() { return bedCount; }
-    public void setBedCount(int bedCount) { this.bedCount = bedCount; }
+    public String getAvailabilityStatus() {
+        return availabilityStatus;
+    }
 
-    public int getMaxOccupancy() { return maxOccupancy; }
-    public void setMaxOccupancy(int maxOccupancy) { this.maxOccupancy = maxOccupancy; }
+    public void setAvailabilityStatus(String availabilityStatus) {
+        this.availabilityStatus = availabilityStatus;
+    }
 
-    public int getRoomSize() { return roomSize; }
-    public void setRoomSize(int roomSize) { this.roomSize = roomSize; }
+    public int getBedCount() {
+        return bedCount;
+    }
 
-    public String getSpecialAmenities() { return specialAmenities; }
-    public void setSpecialAmenities(String specialAmenities) { this.specialAmenities = specialAmenities; }
+    public void setBedCount(int bedCount) {
+        this.bedCount = bedCount;
+    }
 
-    // Optionally, override toString() for easy debugging/logging
+    public int getMaxOccupancy() {
+        return maxOccupancy;
+    }
+
+    public void setMaxOccupancy(int maxOccupancy) {
+        this.maxOccupancy = maxOccupancy;
+    }
+
+    public int getRoomSize() {
+        return roomSize;
+    }
+
+    public void setRoomSize(int roomSize) {
+        this.roomSize = roomSize;
+    }
+
+    public String getSpecialAmenities() {
+        return specialAmenities;
+    }
+
+    public void setSpecialAmenities(String specialAmenities) {
+        this.specialAmenities = specialAmenities;
+    }
+
+    public String getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
         return "Room{" +
