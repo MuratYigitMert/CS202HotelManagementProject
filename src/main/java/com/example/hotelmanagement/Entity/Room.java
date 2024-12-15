@@ -11,13 +11,12 @@ public class Room {
     private int maxOccupancy;
     private int roomSize;
     private String specialAmenities;
-    private String roomType; // Added
-    private double price;    // Added
+   // Added
 
     // Constructor
     public Room(int roomId, int hotelId, String roomNumber, int roomTypeId,
                 String availabilityStatus, int bedCount, int maxOccupancy,
-                int roomSize, String specialAmenities, String roomType, double price) {
+                int roomSize, String specialAmenities) {
         this.roomId = roomId;
         this.hotelId = hotelId;
         this.roomNumber = roomNumber;
@@ -27,8 +26,7 @@ public class Room {
         this.maxOccupancy = maxOccupancy;
         this.roomSize = roomSize;
         this.specialAmenities = specialAmenities;
-        this.roomType = roomType;
-        this.price = price;
+
     }
 
     // Getters and Setters
@@ -104,36 +102,7 @@ public class Room {
         this.specialAmenities = specialAmenities;
     }
 
-    public String getRoomType() {
-        return roomType;
-    }
 
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
-    }
 
-    public double getPrice() {
-        return price;
-    }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    @Override
-    public String toString() {
-        return "Room{" +
-                "roomId=" + roomId +
-                ", hotelId=" + hotelId +
-                ", roomNumber='" + roomNumber + '\'' +
-                ", roomTypeId=" + roomTypeId +
-                ", roomType='" + roomType + '\'' +
-                ", price=" + price +
-                ", availabilityStatus='" + availabilityStatus + '\'' +
-                ", bedCount=" + bedCount +
-                ", maxOccupancy=" + maxOccupancy +
-                ", roomSize=" + roomSize +
-                ", specialAmenities='" + specialAmenities + '\'' +
-                '}';
-    }
 }

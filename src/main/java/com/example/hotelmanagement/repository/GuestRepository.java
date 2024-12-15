@@ -116,5 +116,19 @@ public class GuestRepository {
             statement.executeUpdate();
         }
     }
+
+    public boolean existsById(int guestId) throws SQLException {
+        // SQL query to check if the guest exists
+        String query = "SELECT COUNT(*) FROM Guest WHERE guest_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, guestId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
+
 }
 
