@@ -61,12 +61,12 @@ public class BookingRepository {
             while (resultSet.next()) {
                 Booking booking = new Booking(
                         resultSet.getInt("bookingId"),
-                        resultSet.getString("bookingStatus"),
-                        resultSet.getDate("checkInDate"),
-                        resultSet.getDate("checkOutDate"),
-                        resultSet.getInt("guestId"),
-                        resultSet.getInt("roomId"),
-                        resultSet.getInt("canceledBy")
+                        resultSet.getString("Booking_status"),
+                        resultSet.getDate("CheckInDate"),
+                        resultSet.getDate("CheckOutDate"),
+                        resultSet.getInt("Guest_ID"),
+                        resultSet.getInt("Room_ID"),
+                        resultSet.getInt("canceled_by")
                 );
                 bookings.add(booking);
             }
@@ -208,6 +208,44 @@ public class BookingRepository {
                     return null; // No booking found with the given ID
                 }
             }
+        }
+    }
+    public List<Booking> findBookingsByGuestId(int guestId) {
+        List<Booking> bookings = new ArrayList<>();
+        String query = "SELECT * FROM Booking WHERE Guest_ID = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, guestId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Booking booking = new Booking(
+                        resultSet.getInt("BookingID"),
+                        resultSet.getString("Booking_status"),
+                        resultSet.getDate("CheckInDate"),
+                        resultSet.getDate("CheckOutDate"),
+                        resultSet.getInt("Guest_ID"),
+                        resultSet.getInt("Room_ID"),
+                        resultSet.getInt("canceled_by")
+                );
+                bookings.add(booking);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching bookings: " + e.getMessage());
+        }
+
+        return bookings;
+    }
+    public boolean deleteBookingById(int bookingId) {
+        String query = "DELETE FROM booking WHERE BookingID = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, bookingId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error deleting booking: " + e.getMessage());
+            return false;
         }
     }
 
