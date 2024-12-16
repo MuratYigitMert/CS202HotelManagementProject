@@ -263,4 +263,32 @@ public class RoomRepository {
         }
     }
 
+    public List<String> getMostBookedRoomTypes() throws SQLException {
+        // SQL query to find the most booked room types
+        String query = """
+            SELECT rt.type_name, COUNT(b.bookingId) AS booking_count
+            FROM Booking b
+            JOIN Room r ON b.room_id = r.room_id
+            JOIN Room_Type rt ON r.room_type_id = rt.room_type_id
+            GROUP BY rt.type_name
+            ORDER BY booking_count DESC
+            LIMIT 5;
+            """;
+
+        List<String> mostBookedRoomTypes = new ArrayList<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String roomType = resultSet.getString("type_name");
+                int bookingCount = resultSet.getInt("booking_count");
+                mostBookedRoomTypes.add(roomType + " - " + bookingCount + " bookings");
+            }
+        }
+
+        return mostBookedRoomTypes;
+    }
+
+
 }

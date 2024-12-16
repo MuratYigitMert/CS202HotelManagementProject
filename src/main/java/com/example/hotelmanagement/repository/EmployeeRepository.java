@@ -6,21 +6,21 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 public class EmployeeRepository  {
-        // CREATE
-        final String INSERT_EMPLOYEE = "INSERT INTO Employee (employee_id, user_id, hotel_id, role_id, salary) VALUES (?,?, ?, ?, ?)";
+    // CREATE
+    final String INSERT_EMPLOYEE = "INSERT INTO Employee (employee_id, user_id, hotel_id, role_id, salary) VALUES (?,?, ?, ?, ?)";
 
-        // READ
-        final String SELECT_ALL_EMPLOYEES = "SELECT * FROM Employee";
-        final String SELECT_EMPLOYEE_BY_employee_id = "SELECT * FROM Employee WHERE employee_id = ?";
-        final String SELECT_EMPLOYEE_BY_hotel_id = "SELECT * FROM Employee WHERE hotel_id = ?";
-        final String SELECT_EMPLOYEE_BY_role_id = "SELECT * FROM Employee WHERE role_id = ?";
+    // READ
+    final String SELECT_ALL_EMPLOYEES = "SELECT * FROM Employee";
+    final String SELECT_EMPLOYEE_BY_employee_id = "SELECT * FROM Employee WHERE employee_id = ?";
+    final String SELECT_EMPLOYEE_BY_hotel_id = "SELECT * FROM Employee WHERE hotel_id = ?";
+    final String SELECT_EMPLOYEE_BY_role_id = "SELECT * FROM Employee WHERE role_id = ?";
 
-        // UPDATE
-       final  String UPDATE_EMPLOYEE = "UPDATE Employee SET user_id = ?, hotel_id = ?, role_id = ?, salary = ? WHERE employee_id = ?";
+    // UPDATE
+    final  String UPDATE_EMPLOYEE = "UPDATE Employee SET user_id = ?, hotel_id = ?, role_id = ?, salary = ? WHERE employee_id = ?";
 
-        // DELETE
-        final String DELETE_EMPLOYEE = "DELETE FROM Employee WHERE employee_id = ?";
-        final String DELETE_All= "DELETE FROM Employee";
+    // DELETE
+    final String DELETE_EMPLOYEE = "DELETE FROM Employee WHERE employee_id = ?";
+    final String DELETE_All= "DELETE FROM Employee";
     private final Connection connection;
     public EmployeeRepository(Connection connection) {
         this.connection = connection;
@@ -148,7 +148,4 @@ public class EmployeeRepository  {
         }
     }
 
-    }
-
-
-
+}

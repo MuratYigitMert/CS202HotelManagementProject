@@ -2,10 +2,15 @@ package com.example.hotelmanagement.repository;
 
 import com.example.hotelmanagement.Entity.Booking;
 
+import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.sql.SQLException;
+import java.util.Map;
+
 public class BookingRepository {
     private final Connection connection;
     public BookingRepository(Connection connection) {
@@ -248,6 +253,22 @@ public class BookingRepository {
             return false;
         }
     }
+    // Check if there are active bookings for a specific room
+    public boolean hasActiveBookings(int roomId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Booking WHERE Room_ID = ? AND Booking_status != 'Canceled' AND CURRENT_DATE BETWEEN CheckInDate AND CheckOutDate";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, roomId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0; // If count is greater than 0, room has active bookings
+                }
+            }
+        }
+        return false;
+    }
+
+
 
 
 }
