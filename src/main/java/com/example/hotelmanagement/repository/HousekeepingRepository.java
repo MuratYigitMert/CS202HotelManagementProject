@@ -91,4 +91,29 @@ public class HousekeepingRepository {
             statement.executeUpdate();
         }
     }
+    public List<Housekeeping> getAllHousekeepersWithAvailability() throws SQLException {
+        String query = """
+                SELECT h.employee_id, h.cleaning_area, h.shift, hs.status
+                FROM Housekeeping h
+                LEFT JOIN Housekeeping_Schedule hs ON h.employee_id = hs.housekeeping_id;
+                """;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                List<Housekeeping> housekeepers = new ArrayList<>();
+                while (resultSet.next()) {
+                    int employeeId = resultSet.getInt("employee_id");
+                    String cleaningArea = resultSet.getString("cleaning_area");
+                    String shift = resultSet.getString("shift");
+                    String status = resultSet.getString("status");
+
+                    // Construct a Housekeeping object for each record
+                    Housekeeping housekeeping = new Housekeeping(employeeId, cleaningArea, shift);
+                    housekeeping.setShift(status != null ? status : "Available");
+                    housekeepers.add(housekeeping);
+                }
+                return housekeepers;
+            }
+        }
+    }
 }

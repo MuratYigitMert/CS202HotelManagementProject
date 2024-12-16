@@ -1,17 +1,18 @@
 package com.example.hotelmanagement;
 
 import com.example.hotelmanagement.Entity.Booking;
+import com.example.hotelmanagement.Entity.Housekeeping;
+import com.example.hotelmanagement.Entity.HousekeepingSchedule;
 import com.example.hotelmanagement.Entity.Room;
-import com.example.hotelmanagement.repository.PaymentsRepository;
+import com.example.hotelmanagement.repository.*;
 import com.example.hotelmanagement.services.*;
-import com.example.hotelmanagement.repository.BookingRepository;
-import com.example.hotelmanagement.repository.GuestRepository;
-import com.example.hotelmanagement.repository.RoomRepository;
 import com.example.hotelmanagement.services.ProcessPayment;
-import com.example.hotelmanagement.DatabaseConnection;
+
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleMenu {
@@ -23,7 +24,10 @@ public class ConsoleMenu {
     private final ViewMyBookings viewMyBookingsService = new ViewMyBookings(bookingRepository);
     private final CancelBooking cancelBookingService = new CancelBooking(bookingRepository);
     private final PaymentsRepository paymentsRepository = new PaymentsRepository(connection);
-    private final  ProcessPayment processPaymentService = new ProcessPayment(paymentsRepository);
+    private final ProcessPayment processPaymentService = new ProcessPayment(paymentsRepository);
+    private final HousekeepingScheduleRepository housekeepingScheduleRepository= new HousekeepingScheduleRepository(connection);
+    private final HousekeepingScheduleService housekeepingScheduleService= new HousekeepingScheduleService(housekeepingScheduleRepository);
+    private final HousekeepingRepository hkeeperRecAvaService = new HousekeepingRepository(connection);
     public static void main(String[] args) {
         Connection connection = DatabaseConnection.getConnection();
 
@@ -158,14 +162,16 @@ public class ConsoleMenu {
         int choice = -1;
 
 
-        while (choice != 6) {
+        while (choice != 8) {
             System.out.println("\n--- Receptionist Menu ---");
             System.out.println("1. Add New Booking");
             System.out.println("2. Modify Booking");
             System.out.println("3. Delete Booking");
             System.out.println("4. View Bookings");
             System.out.println("5. Process Payment");
-            System.out.println("6. Exit to Main Menu");
+            System.out.println("6. Assign Housekeeping Task");
+            System.out.println("7. Housekeepers and their availability");
+            System.out.println("8. Exit to Main Menu");
             System.out.print("Enter your choice: ");
 
             try {
@@ -176,8 +182,10 @@ public class ConsoleMenu {
                     case 3 -> cancelBooking(scanner);
                     case 4 -> viewBookings(scanner);
                     case 5 -> processPayment(scanner);
-                    case 6 -> System.out.println("Returning to Main Menu...");
-                    default -> System.out.println("Invalid choice. Please select a number between 1 and 6.");
+                    case 6 -> assignHousekeepingTask(scanner);
+                    case 7 -> viewAllHousekeepersWithAvailability();
+                    case 8 -> System.out.println("Returning to Main Menu...");
+                    default -> System.out.println("Invalid choice. Please select a number between 1 and 8.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a valid number.");
@@ -303,7 +311,44 @@ public class ConsoleMenu {
             System.out.println("An error occurred while processing the payment: " + e.getMessage());
         }
     }
+    public void assignHousekeepingTask(Scanner scanner) {
+        try {
+            System.out.println("Enter task date (yyyy-mm-dd): ");
+            String taskDateInput = scanner.nextLine();
+            Date taskDate = Date.valueOf(taskDateInput);
 
+            System.out.println("Enter status (e.g., Pending, Completed): ");
+            String status = scanner.nextLine();
+
+            System.out.println("Enter housekeeping employee ID: ");
+            int housekeepingId = Integer.parseInt(scanner.nextLine());
+
+            System.out.println("Enter room ID: ");
+            int roomId = Integer.parseInt(scanner.nextLine());
+
+            HousekeepingSchedule schedule = new HousekeepingSchedule(0, taskDate, status, housekeepingId, roomId);
+            housekeepingScheduleService.assignHousekeepingTask(schedule);
+
+            System.out.println("Task assigned successfully!");
+        } catch (SQLException e) {
+            System.err.println("Error assigning housekeeping task: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid input: " + e.getMessage());
+        }
+    }
+    private void viewAllHousekeepersWithAvailability() {
+        try {
+            // Call the method on the instance of HousekeepingRepository
+            List<Housekeeping> housekeepers = hkeeperRecAvaService.getAllHousekeepersWithAvailability();
+
+            // Print out the details of the housekeepers (you can customize this part as needed)
+            for (Housekeeping housekeeping : housekeepers) {
+                System.out.println("Housekeeper ID: " + housekeeping.getEmployeeId() + ", Area: " + housekeeping.getCleaningArea() + ", Shift: " + housekeeping.getShift());
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving housekeepers: " + e.getMessage());
+        }
+    }
 
 
     private void housekeepingMenu(Scanner scanner) {
