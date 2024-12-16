@@ -2,10 +2,12 @@ package com.example.hotelmanagement;
 
 import com.example.hotelmanagement.Entity.Booking;
 import com.example.hotelmanagement.Entity.Room;
+import com.example.hotelmanagement.repository.PaymentsRepository;
 import com.example.hotelmanagement.services.*;
 import com.example.hotelmanagement.repository.BookingRepository;
 import com.example.hotelmanagement.repository.GuestRepository;
 import com.example.hotelmanagement.repository.RoomRepository;
+import com.example.hotelmanagement.services.ProcessPayment;
 import com.example.hotelmanagement.DatabaseConnection;
 
 import java.sql.Connection;
@@ -20,6 +22,8 @@ public class ConsoleMenu {
     private final BookingRepository bookingRepository = new BookingRepository(connection);
     private final ViewMyBookings viewMyBookingsService = new ViewMyBookings(bookingRepository);
     private final CancelBooking cancelBookingService = new CancelBooking(bookingRepository);
+    private final PaymentsRepository paymentsRepository = new PaymentsRepository(connection);
+    private final  ProcessPayment processPaymentService = new ProcessPayment(paymentsRepository);
     public static void main(String[] args) {
         Connection connection = DatabaseConnection.getConnection();
 
@@ -153,13 +157,15 @@ public class ConsoleMenu {
     private void receptionistMenu(Scanner scanner) {
         int choice = -1;
 
-        while (choice != 5) {
+
+        while (choice != 6) {
             System.out.println("\n--- Receptionist Menu ---");
             System.out.println("1. Add New Booking");
             System.out.println("2. Modify Booking");
             System.out.println("3. Delete Booking");
             System.out.println("4. View Bookings");
-            System.out.println("5. Exit to Main Menu");
+            System.out.println("5. Process Payment");
+            System.out.println("6. Exit to Main Menu");
             System.out.print("Enter your choice: ");
 
             try {
@@ -167,17 +173,18 @@ public class ConsoleMenu {
                 switch (choice) {
                     case 1 -> addBooking(scanner);
                     case 2 -> modifyBooking(scanner);
-                    case 3 -> cancelBooking(scanner); // Reuse cancelBooking for delete functionality
+                    case 3 -> cancelBooking(scanner);
                     case 4 -> viewBookings(scanner);
-                    case 5 -> System.out.println("Returning to Main Menu...");
-                    default -> System.out.println("Invalid choice. Please select a number between 1 and 4.");
+                    case 5 -> processPayment(scanner);
+                    case 6 -> System.out.println("Returning to Main Menu...");
+                    default -> System.out.println("Invalid choice. Please select a number between 1 and 6.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a valid number.");
             }
         }
-
     }
+
     private void viewBookings(Scanner scanner) {
         // Create the ViewBookings service
         ViewBookings viewBookingsService = new ViewBookings(bookingRepository);
@@ -262,7 +269,7 @@ public class ConsoleMenu {
                 System.out.println("Error: No booking found with ID " + bookingId);
                 return;
             }
-            //System.out.println("Booking Status: [" + booking.getBookingStatus() + "]");
+
             // Check if the booking status is "Pending"
             if ("Pending".equals(booking.getBookingStatus().trim())) {
                 // Update booking status to "Checked-In"
@@ -282,6 +289,18 @@ public class ConsoleMenu {
             }
         } catch (SQLException e) {
             System.out.println("Error: Unable to check in. Details: " + e.getMessage());
+        }
+    }
+    private void processPayment(Scanner scanner) {
+        try {
+            System.out.print("Enter Guest ID to process payment: ");
+            int guestId = Integer.parseInt(scanner.nextLine());
+            String result = processPaymentService.processPayment(guestId, scanner);
+            System.out.println(result);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid Guest ID.");
+        } catch (Exception e) {
+            System.out.println("An error occurred while processing the payment: " + e.getMessage());
         }
     }
 
