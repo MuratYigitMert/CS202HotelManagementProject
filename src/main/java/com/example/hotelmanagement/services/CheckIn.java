@@ -41,7 +41,7 @@ public class CheckIn {
         bookingRepository.updateBookingStatus(booking);
 
         // Update the room availability status to Occupied
-        Room room = roomRepository.findById(booking.getRoomId());
+        Room room = roomRepository.getRoomById(booking.getRoomId());
         if (room != null) {
             room.setAvailabilityStatus("Occupied");
             roomRepository.updateRoomStatus(room);

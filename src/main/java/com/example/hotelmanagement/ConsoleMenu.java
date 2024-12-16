@@ -277,7 +277,7 @@ public class ConsoleMenu {
                 bookingRepository.updateBookingStatus(booking);
 
                 // Update room status to "Occupied"
-                Room room = roomRepository.findById(booking.getRoomId());
+                Room room = roomRepository.getRoomById(booking.getRoomId());
                 if (room != null) {
                     room.setAvailabilityStatus("Occupied");
                     roomRepository.updateRoomStatus(room);

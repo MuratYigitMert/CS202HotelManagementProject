@@ -5,28 +5,26 @@ public class Room {
     private int hotelId;
     private String roomNumber;
     private String availabilityStatus;
-    private int roomTypeId;
+    private Room_Type roomType;  // Use RoomType instead of roomTypeId
 
     private int bedCount;
     private int maxOccupancy;
     private int roomSize;
     private String specialAmenities;
-   // Added
 
     // Constructor
-    public Room(int roomId, int hotelId, String roomNumber, int roomTypeId,
+    public Room(int roomId, int hotelId, String roomNumber, Room_Type roomType,
                 String availabilityStatus, int bedCount, int maxOccupancy,
                 int roomSize, String specialAmenities) {
         this.roomId = roomId;
         this.hotelId = hotelId;
         this.roomNumber = roomNumber;
-        this.roomTypeId = roomTypeId;
+        this.roomType = roomType;  // Now referring to the RoomType object
         this.availabilityStatus = availabilityStatus;
         this.bedCount = bedCount;
         this.maxOccupancy = maxOccupancy;
         this.roomSize = roomSize;
         this.specialAmenities = specialAmenities;
-
     }
 
     // Getters and Setters
@@ -54,12 +52,12 @@ public class Room {
         this.roomNumber = roomNumber;
     }
 
-    public int getRoomTypeId() {
-        return roomTypeId;
+    public Room_Type getRoomType() {
+        return roomType;  // Get the RoomType object
     }
 
-    public void setRoomTypeId(int roomTypeId) {
-        this.roomTypeId = roomTypeId;
+    public void setRoomType(Room_Type roomType) {
+        this.roomType = roomType;  // Set the RoomType object
     }
 
     public String getAvailabilityStatus() {
@@ -101,8 +99,4 @@ public class Room {
     public void setSpecialAmenities(String specialAmenities) {
         this.specialAmenities = specialAmenities;
     }
-
-
-
-
 }
