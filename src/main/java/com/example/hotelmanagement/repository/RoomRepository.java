@@ -1,7 +1,6 @@
 package com.example.hotelmanagement.repository;
 
 import com.example.hotelmanagement.Entity.Room;
-import com.example.hotelmanagement.Entity.Room_Type;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoomRepository {
-
     // CREATE
     final String INSERT_ROOM = "INSERT INTO Room (hotel_id, room_number, R_availability_status, bed_count, max_occupancy, " +
             "room_size, special_amenities, room_type_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -42,14 +40,21 @@ public class RoomRepository {
     public RoomRepository(Connection connection) {
         this.connection = connection;
     }
-    private Room_Type mapRoomTypeFromResultSet(ResultSet resultSet) throws SQLException {
-        return new Room_Type(
-                resultSet.getInt("room_type_id"),
-                resultSet.getString("type_name"),
-                resultSet.getDouble("default_price")
-        );
-    }
 
+    // CREATE: Insert a new room
+    public void insertRoom(Room room) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_ROOM)) {
+            statement.setInt(1, room.getHotelId());
+            statement.setString(2, room.getRoomNumber());
+            statement.setString(3, room.getAvailabilityStatus().toString());
+            statement.setInt(4, room.getBedCount());
+            statement.setInt(5, room.getMaxOccupancy());
+            statement.setInt(6, room.getRoomSize());
+            statement.setString(7, room.getSpecialAmenities());
+            statement.setInt(8, room.getRoomTypeId());
+            statement.executeUpdate();
+        }
+    }
 
     // READ ALL: Get all rooms
     public List<Room> getAllRooms() throws SQLException {
@@ -58,17 +63,19 @@ public class RoomRepository {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                Room_Type roomType = mapRoomTypeFromResultSet(resultSet);
+
                 Room room = new Room(
                         resultSet.getInt("room_id"),
                         resultSet.getInt("hotel_id"),
                         resultSet.getString("room_number"),
-                        roomType,
+                        resultSet.getInt("room_type_id"),
                         resultSet.getString("R_availability_status"),
                         resultSet.getInt("bed_count"),
                         resultSet.getInt("max_occupancy"),
                         resultSet.getInt("room_size"),
                         resultSet.getString("special_amenities")
+
+
                 );
                 rooms.add(room);
             }
@@ -76,24 +83,23 @@ public class RoomRepository {
         return rooms;
     }
 
-
     // READ BY ID: Get a room by its ID
     public Room getRoomById(int roomId) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SELECT_ROOM_BY_ID)) {
             statement.setInt(1, roomId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    Room_Type roomType = mapRoomTypeFromResultSet(resultSet);
                     return new Room(
                             resultSet.getInt("room_id"),
                             resultSet.getInt("hotel_id"),
                             resultSet.getString("room_number"),
-                            roomType,
+                            resultSet.getInt("room_type_id"),
                             resultSet.getString("R_availability_status"),
                             resultSet.getInt("bed_count"),
                             resultSet.getInt("max_occupancy"),
                             resultSet.getInt("room_size"),
                             resultSet.getString("special_amenities")
+
                     );
                 }
             }
@@ -108,24 +114,24 @@ public class RoomRepository {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                Room_Type roomType = mapRoomTypeFromResultSet(resultSet);
                 Room room = new Room(
                         resultSet.getInt("room_id"),
                         resultSet.getInt("hotel_id"),
                         resultSet.getString("room_number"),
-                        roomType,
+                        resultSet.getInt("room_type_id"),
                         resultSet.getString("R_availability_status"),
                         resultSet.getInt("bed_count"),
                         resultSet.getInt("max_occupancy"),
                         resultSet.getInt("room_size"),
                         resultSet.getString("special_amenities")
+
+
                 );
                 availableRooms.add(room);
             }
         }
         return availableRooms;
     }
-
     public List<Integer> getAvailableRooms(LocalDate startDate, LocalDate endDate) throws SQLException {
         String query = "SELECT room_id FROM Room WHERE room_id NOT IN (" +
                 "SELECT room_id FROM Booking WHERE NOT (CheckOutDate <= ? OR CheckInDate >= ?)" +
@@ -146,7 +152,6 @@ public class RoomRepository {
     }
 
 
-
     // UPDATE: Update an existing room
     public void updateRoom(Room room) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_ROOM)) {
@@ -157,7 +162,7 @@ public class RoomRepository {
             statement.setInt(5, room.getMaxOccupancy());
             statement.setInt(6, room.getRoomSize());
             statement.setString(7, room.getSpecialAmenities());
-            statement.setInt(8, room.getRoomType().getRoomTypeId()); // Get ID from Room_Type
+            statement.setInt(8, room.getRoomTypeId());
             statement.setInt(9, room.getRoomId());
             statement.executeUpdate();
         }
@@ -178,26 +183,34 @@ public class RoomRepository {
         }
     }
 
-    // Additional methods remain the same:
-
-    // Check if a room exists by its ID
     public boolean existsById(int roomId) throws SQLException {
+        // SQL query to check if the room exists
         String query = "SELECT COUNT(*) FROM Room WHERE room_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, roomId);
             ResultSet rs = stmt.executeQuery();
-            return rs.next() && rs.getInt(1) > 0;
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
         }
+        return false;
     }
-
-    // Check if a room is available for a given date range
     public boolean isRoomAvailable(int roomId, LocalDate startDate, LocalDate endDate) throws SQLException {
-        List<Integer> availableRooms = getAvailableRooms(startDate, endDate);
-        return availableRooms.contains(roomId);
+        // SQL query to check room availability
+        String query = "SELECT COUNT(*) FROM Booking WHERE room_id = ? AND NOT (CheckOutDate <= ? OR CheckInDate >= ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, roomId);
+            stmt.setDate(2, java.sql.Date.valueOf(startDate));
+            stmt.setDate(3, java.sql.Date.valueOf(endDate));
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) == 0;
+            }
+        }
+        return false;
     }
-
-    // Check if a room is available for modification (excluding the current booking)
     public boolean isRoomAvailableForModification(int roomId, int bookingId, LocalDate startDate, LocalDate endDate) throws SQLException {
+        // SQL query to check room availability, excluding the current booking ID
         String query = "SELECT COUNT(*) FROM Booking WHERE room_id = ? AND BookingID != ? AND NOT (CheckOutDate <= ? OR CheckInDate >= ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, roomId);           // Room ID
@@ -205,11 +218,42 @@ public class RoomRepository {
             stmt.setDate(3, java.sql.Date.valueOf(startDate));   // Start date of modification
             stmt.setDate(4, java.sql.Date.valueOf(endDate));     // End date of modification
             ResultSet rs = stmt.executeQuery();
-            return rs.next() && rs.getInt(1) == 0;
+            if (rs.next()) {
+                int count = rs.getInt(1);  // Room is available if no other bookings overlap the dates
+                System.out.println("Number of conflicting bookings: " + count); // Debugging output
+                return count == 0;
+            }
+        }
+        return false;  // Room is not available for the new dates
+    }
+    public Room findById(int roomId) throws SQLException {
+        String query = "SELECT * FROM Room WHERE room_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, roomId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new Room(
+                            resultSet.getInt("room_id"),
+                            resultSet.getInt("hotel_id"),
+                            resultSet.getString("room_number"),
+                            resultSet.getInt("room_type_id"),
+                            resultSet.getString("R_availability_status"),
+                            resultSet.getInt("bed_count"),
+                            resultSet.getInt("max_occupancy"),
+                            resultSet.getInt("room_size"),
+                            resultSet.getString("special_amenities")
+
+
+
+
+
+                    );
+                } else {
+                    return null; // Room not found
+                }
+            }
         }
     }
-
-    // Update the room's availability status
     public void updateRoomStatus(Room room) throws SQLException {
         String query = "UPDATE Room SET R_availability_status = ? WHERE room_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -218,4 +262,5 @@ public class RoomRepository {
             statement.executeUpdate();
         }
     }
+
 }

@@ -51,4 +51,26 @@ public class PaymentsRepository {
             return statement.executeUpdate() > 0;
         }
     }
+
+    // Fetch all payments with "Paid" status
+    public List<Payments> findAllPaidPayments() throws SQLException {
+        String query = "SELECT * FROM payments WHERE paymentStatus = 'Paid'";
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            List<Payments> payments = new ArrayList<>();
+            while (resultSet.next()) {
+                Payments payment = new Payments(
+                        resultSet.getInt("PaymentID"),
+                        resultSet.getString("PaymentStatus"),
+                        resultSet.getDouble("Amount"),
+                        resultSet.getDate("PaymentDate"),
+                        resultSet.getInt("Booking_ID")
+                );
+                payments.add(payment);
+            }
+            return payments;
+        }
+    }
+
 }

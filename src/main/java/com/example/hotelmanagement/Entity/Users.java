@@ -20,6 +20,7 @@ public class Users {
         this.dateOfBirth = dateOfBirth;
     }
 
+
     // Getters and Setters
     public int getUserId() {
         return userId;
