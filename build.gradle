@@ -9,10 +9,12 @@ repositories {
 
 dependencies {
     // Add your dependencies here, if any
+    implementation 'mysql:mysql-connector-java:8.0.33'
+
 }
 
 application {
-    mainClass = 'com.example.hotelmanagement.ConsoleMenu'
+
 }
 
 

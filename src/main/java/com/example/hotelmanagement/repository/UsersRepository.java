@@ -25,11 +25,11 @@ public class UsersRepository {
     private static final String DELETE_ALL_USERS =
             "DELETE FROM Users";
 
-    private final Connection connection;
+    private static Connection connection;
 
     // Constructor
     public UsersRepository(Connection connection) {
-        this.connection = connection;
+        UsersRepository.connection = connection;
     }
 
     // CREATE: Add a new user

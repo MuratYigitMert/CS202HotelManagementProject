@@ -1,6 +1,7 @@
 package com.example.hotelmanagement.repository;
 
 import com.example.hotelmanagement.Entity.Housekeeping;
+import com.example.hotelmanagement.Entity.HousekeepingSchedule;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -114,6 +115,54 @@ public class HousekeepingRepository {
                 }
                 return housekeepers;
             }
+        }
+    }
+    public List<HousekeepingSchedule> getTasksByStatus(String status) throws SQLException {
+        List<HousekeepingSchedule> tasks = new ArrayList<>();
+        String query = "SELECT * FROM housekeeping_schedule WHERE status = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, status);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                tasks.add(new HousekeepingSchedule(
+                        rs.getInt("task_id"),
+                        rs.getDate("task_date"),
+                        rs.getString("status"),
+                        rs.getInt("housekeeping_id"),
+                        rs.getInt("room_id")
+                ));
+            }
+        }
+        return tasks;
+    }
+
+    // Get tasks assigned to a specific housekeeping employee (housekeeping_id)
+    public List<HousekeepingSchedule> getTasksByHousekeepingId(int housekeepingId) throws SQLException {
+        List<HousekeepingSchedule> tasks = new ArrayList<>();
+        String query = "SELECT * FROM housekeeping_schedule WHERE housekeeping_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, housekeepingId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                tasks.add(new HousekeepingSchedule(
+                        rs.getInt("task_id"),
+                        rs.getDate("task_date"),
+                        rs.getString("status"),
+                        rs.getInt("housekeeping_id"),
+                        rs.getInt("room_id")
+                ));
+            }
+        }
+        return tasks;
+    }
+
+    // Update the status of a housekeeping task (e.g., to Completed)
+    public void updateTaskStatus(int taskId, String newStatus) throws SQLException {
+        String query = "UPDATE housekeeping_schedule SET status = ? WHERE TaskID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, newStatus);
+            statement.setInt(2, taskId);
+            statement.executeUpdate();
         }
     }
 }

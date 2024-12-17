@@ -27,4 +27,30 @@ public class RoomTypeRepository {
         }
         return null;
     }
+    public Room_Type getRoomTypeByName(String roomTypeName) throws SQLException {
+        Room_Type roomType = null;
+        String query = "SELECT * FROM Room_Type WHERE type_name = ?"; // SQL query to fetch Room_Type by typeName
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, roomTypeName); // Set the roomTypeName in the query
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    // If a matching room type is found, create a Room_Type object
+                    int roomTypeId = resultSet.getInt("room_type_id");
+                    String typeName = resultSet.getString("type_name");
+                    double defaultPrice = resultSet.getDouble("default_price");
+
+                    roomType = new Room_Type(roomTypeId, typeName, defaultPrice); // Create Room_Type object
+                }
+            }
+        } catch (SQLException e) {
+            // Handle any SQL exceptions
+            System.out.println("Error retrieving Room_Type by name: " + e.getMessage());
+            throw e;  // Re-throw exception to be handled further up the stack
+        }
+
+        return roomType; // Return the Room_Type object or null if not found
+    }
+
 }
